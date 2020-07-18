@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\CategoryStoreRequest;
+use App\Http\Requests\CategoryUpdateRequest;
 
 class CategoryController extends Controller
 {
@@ -14,7 +17,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::orderBy('id', 'DESC')->paginate(8);
+
+        return view('admin.categories.index', compact('categories'));
     }
 
     /**
@@ -24,7 +29,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.categories.create');
     }
 
     /**
@@ -33,9 +38,12 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryStoreRequest $request)
     {
-        //
+        $category = Category::create($request->all());
+
+        return redirect()->route('categories.edit', $category->id)
+                         ->with('info', 'la categoria se creo correctamente');
     }
 
     /**
@@ -46,7 +54,9 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category = Category::find($id);
+
+        return view('admin.categories.show', compact('category'));
     }
 
     /**
@@ -57,8 +67,10 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
-    }
+        $category = Category::find($id);
+
+        return view('admin.categories.edit', compact('category'));  
+    } 
 
     /**
      * Update the specified resource in storage.
@@ -67,9 +79,13 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CategoryStoreRequest $request, $id)
     {
-        //
+        $category = Category::find($id);
+        $category->fill($request->all())->save();
+
+        return redirect()->route('categories.edit', $category->id)
+                         ->with('info', 'la categoria se modifico correctamente');
     }
 
     /**
@@ -80,6 +96,10 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $category = Category::find($id)->delete();
+
+        return redirect()->route('categories.index')
+                         ->with('info', 'la categoria se elimino correctamente');
+
     }
 }
