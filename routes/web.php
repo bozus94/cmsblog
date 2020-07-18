@@ -18,6 +18,15 @@ Route::redirect('/', 'blog');
 Auth::routes();
 
 Route::get('/', 'web\PageController@blog')->name('blog');
-Route::get('entrada/{slug}', 'web\PageController@post')->name('post');
-Route::get('etiqueta/{slug}', 'web\PageController@tag')->name('tag');
-Route::get('categoria/{slug}', 'web\PageController@category')->name('category');
+
+//Web
+Route::get('entrada/{slug}', 'Web\PageController@post')->name('post');
+Route::get('etiqueta/{slug}', 'Web\PageController@tag')->name('tag');
+Route::get('categoria/{slug}', 'Web\PageController@category')->name('category');
+
+//Admin
+Route::group(['middleware' => ['auth']], function () {
+    Route::resource('tags', 'Admin\TagController');
+    Route::resource('posts', 'Admin\PostController');
+    Route::resource('categories', 'Admin\CategoryController');
+});

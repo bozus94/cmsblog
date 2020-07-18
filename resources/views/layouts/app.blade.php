@@ -9,10 +9,7 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-
-    <!-- Fonts -->
+       <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
@@ -33,7 +30,9 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                        <li class="nav-item">
+                            <a href="{{ route('blog') }}" class="nav-link">Blog</a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -49,6 +48,15 @@
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                <a href="{{ route('tags.index') }}" class="nav-link">Etiquetas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('posts.index') }}" class="nav-link">Entradas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('categories.index') }}" class="nav-link">Categorias</a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
@@ -72,9 +80,47 @@
             </div>
         </nav>
 
+        {{-- CONTENIDO --}}
         <main class="py-4">
+            {{-- MENSAJE FLASH --}}
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 offset-md-2">
+                        @if (session('info'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>Muy bien! </strong> {{ session('info') }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
+                        
+                        {{-- ERRORES --}}
+                        @if (count($errors))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Oh no! </strong> Corrige los siguientes errores:
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                
+                                <ul class="mt-1">
+                                    @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
             @yield('content')
         </main>
     </div>
+
+    {{-- JAVASCRIPT --}}
+     <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}"></script>
+    @yield('scripts')
+    
 </body>
 </html>
