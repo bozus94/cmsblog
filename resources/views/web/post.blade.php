@@ -8,8 +8,8 @@
                     Categoria 
                     <a href="{{ route('category', $post->category->slug) }}">{{ $post->category->name }}</a>
                 </div>
-                @if ($post->file)
-                    <img src="{{ $post->file }}" class="card-img-top" alt="...">
+                @if ($post->ff_path)
+                    <img src="{{ $post->ff_path }}" class="card-img-top" alt="...">
                 @endif
                 <div class="card-body"> 
                     <p class="card-text">{{ $post->excerpt }}</p>

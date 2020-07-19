@@ -9,8 +9,8 @@
 </div>
 
 <div class="form-group">
-    {{ Form::label('body', 'Description')  }}
-    {{ Form::textarea('body', null, ['class' => 'form-control', 'id' => 'body', 'rows' => 5]) }}
+    {{ Form::label('body', 'Contenido')  }}
+    {{ Form::text('body', null, ['class' => 'form-control', 'id' => 'body']) }}
 </div>
 
 <div class="form-group">

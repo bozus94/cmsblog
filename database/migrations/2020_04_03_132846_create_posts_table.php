@@ -27,6 +27,8 @@ class CreatePostsTable extends Migration
             $table->enum('status', ['PUBLISHED', 'DRAFT'])->default('DRAFT');
 
             $table->string('file', 1280)->nullable();
+
+            $table->string('ff_path', 1280)->nullable();
             
             $table->timestamps();
 

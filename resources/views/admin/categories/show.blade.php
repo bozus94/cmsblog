@@ -20,10 +20,6 @@
                               <th width="90px">Slug</th>
                                 <td>{{ $category->slug }}</td>
                             </tr>
-                            <tr>
-                              <th width="90px">Body</th>
-                                <td>{{ $category->body }}</td>
-                            </tr>
                           </tbody>
                         </table>
                         <hr class="p-0 m-0">

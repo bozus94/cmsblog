@@ -5,8 +5,8 @@
             <h1 class=text-center">Lista de articulos</h1>
             @foreach ($posts as $post)
                 <div class="card mb-3">
-                    @if ($post->file)
-                        <img src="{{ $post->file }}" class="card-img-top" alt="...">
+                    @if ($post->ff_path)
+                        <img src="{{ $post->ff_path }}" class="card-img-top" alt="...">
                     @endif
                     <div class="card-body">
                         <h5 class="card-title">{{ $post->name }}</h5>
