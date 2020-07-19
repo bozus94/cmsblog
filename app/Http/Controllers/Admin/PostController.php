@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Http\Controllers\Controller;
+use App\Tag;
+use App\Post;
+use App\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\http\Requests\PostStoreRequest;
+use App\http\Requests\PostUpdateRequest;
 
 class PostController extends Controller
 {
@@ -14,7 +19,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::orderBy('id', 'DESC')->paginate();
+
+        return view('admin.posts.index', compact('posts'));
     }
 
     /**
@@ -24,7 +31,10 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $tags = Tag::orderBy('name', 'ASC')->get();
+        $categories = Category::orderBy('name', 'ASC')->pluck('name', 'id');
+        return view('admin.posts.create', compact(['categories', 'tags']));
+
     }
 
     /**
@@ -33,11 +43,15 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostStoreRequest $request)
     {
-        //
-    }
+        $post = Post::create($request->all());
 
+        $post->tags()->attach($request->input('tags'));
+
+        return redirect()->route('posts.edit', $post->id)
+                        ->with('info', 'La entrada se ha creado correctamente');
+    }
     /**
      * Display the specified resource.
      *
@@ -46,7 +60,9 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        $post = Post::find($id);
+
+        return view('admin.posts.show', compact('post'));
     }
 
     /**
@@ -57,7 +73,11 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::find($id);
+        
+        $tags = Tag::orderBy('name', 'ASC')->get();
+        $categories = Category::orderBy('name', 'ASC')->pluck('name', 'id');
+        return view('admin.posts.edit', compact(['post', 'tags', 'categories']));
     }
 
     /**
@@ -67,9 +87,16 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PostUpdateRequest $request, $id)
     {
-        //
+        $post = Post::find($id);
+
+        $post->fill($request->all())->save();
+
+        $post->tags()->sync($request->input('tags'));
+
+        return redirect()->route('posts.edit', $post->id)
+                        ->with('info', 'La entrada se actualizo correctamente');
     }
 
     /**
@@ -80,6 +107,9 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Post::find($id)->delete();
+
+        return redirect()->route('posts.index')
+                        ->with('info', 'la Entrada se elimino correctamente');
     }
 }
