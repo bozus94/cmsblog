@@ -66,7 +66,7 @@ class PostController extends Controller
                         ->with('info', 'La entrada se ha creado correctamente');
     }
 
-    /**
+        /**
      * Display the specified resource.
      *
      * @param  int  $id
