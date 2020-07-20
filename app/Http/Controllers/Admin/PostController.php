@@ -6,6 +6,7 @@ use App\Tag;
 use App\Post;
 use App\Category;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\http\Requests\PostStoreRequest;
 use Illuminate\Support\Facades\Storage;
 use App\http\Requests\PostUpdateRequest;
@@ -19,7 +20,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::orderBy('id', 'DESC')->paginate();
+        $posts = Post::orderBy('id', 'DESC')->where('user_id', Auth::user()->id)
+                                            ->paginate();
 
         return view('admin.posts.index', compact('posts'));
     }
@@ -73,6 +75,7 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::find($id);
+        $this->authorize('pass', $post);
 
         return view('admin.posts.show', compact('post'));
     }
@@ -85,7 +88,9 @@ class PostController extends Controller
      */
     public function edit($id)
     {
+
         $post = Post::find($id);
+        $this->authorize('pass', $post);
         
         $tags = Tag::orderBy('name', 'ASC')->get();
         $categories = Category::orderBy('name', 'ASC')->pluck('name', 'id');
@@ -102,6 +107,8 @@ class PostController extends Controller
     public function update(PostUpdateRequest $request, $id)
     {
         $post = Post::find($id);
+        $this->authorize('pass', $post);
+
         $image_old = $post->file ? $post->file : null;
 
         $post->fill($request->all())->save();
@@ -132,7 +139,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        Post::find($id)->delete();
+        $post = Post::find($id)->delete();
+        $this->authorize('delete', $post);
 
         return redirect()->route('posts.index')
                         ->with('info', 'la Entrada se elimino correctamente');
