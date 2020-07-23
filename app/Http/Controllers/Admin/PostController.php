@@ -115,9 +115,11 @@ class PostController extends Controller
 
         if($request->file('file')){
 
-            Storage::disk('images_posts')->delete($image_old);
+            if($image_old){
+                Storage::disk('images_posts')->delete($image_old);
+            }
   
-            $path = Storage::disk('images_posts')->put('', $request->file('file'));
+            $path = Storage::disk('images_posts')->putFile('', $request->file('file'));
 
             if($path){
                 $image_path = asset('images/posts/' . $path);
@@ -139,8 +141,13 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        $post = Post::find($id)->delete();
-        $this->authorize('delete', $post);
+        $post = Post::find($id);
+        $this->authorize('pass', $post);
+
+        if($post->file){
+            Storage::disk('images_posts')->delete($post->file);
+        }
+        $post->delete();
 
         return redirect()->route('posts.index')
                         ->with('info', 'la Entrada se elimino correctamente');
