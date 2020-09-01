@@ -25,8 +25,10 @@ Route::get('etiqueta/{slug}', 'Web\PageController@tag')->name('tag');
 Route::get('categoria/{slug}', 'Web\PageController@category')->name('category');
 
 //Admin
-Route::group(['middleware' => ['auth']], function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::resource('categories', 'Admin\CategoryController');
     Route::resource('tags', 'Admin\TagController');
     Route::resource('posts', 'Admin\PostController');
-    Route::resource('categories', 'Admin\CategoryController');
+    Route::resource('users', 'Admin\UserController')->except('create', 'update');
+    Route::resource('roles', 'Admin\RoleController');
 });

@@ -24,25 +24,27 @@
                                     <tr>
                                         <td scope="row">{{ $tag->id }}</td>
                                         <td>{{ $tag->name }}</td>
-                                        {{-- <td width='5px'>
-                                            <a href="{{ route('tags.show', $tag->id) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
-                                        </td> --}}
-                                        <td width='30px'class="px-1">
-                                            <a href="{{ route('tags.show', $tag->id) }}" class="btn btn-sm btn-link text-decoration-none text-dark">Ver</a>
-                                        </td>
-                                        <td width='30px'class="px-1">
-                                            <a href="{{ route('tags.edit', $tag->id) }}" class="btn btn-sm btn-link text-decoration-none text-secondary">Editar</a>
-                                        </td>
-                                        <td width='30px'class="px-1">
-                                            {!! Form::open(['route' => ['tags.destroy', $tag->id], 'method' => 'DELETE']) !!}
-                                                <button class="btn btn-sm  btn-link text-decoration-none text-danger">Eliminar</button>
-                                            {!! Form::close() !!}
-                                        </td>
+                                        @can('tags.show')
+                                            <td width='30px'class="px-1">
+                                                <a href="{{ route('tags.show', $tag->id) }}" class="btn btn-sm btn-link text-decoration-none text-dark">Ver</a>
+                                            </td>
+                                        @endcan
+                                        @can('tags.edit')
+                                            <td width='30px'class="px-1">
+                                                <a href="{{ route('tags.edit', $tag->id) }}" class="btn btn-sm btn-link text-decoration-none text-secondary">Editar</a>
+                                            </td>
+                                        @endcan
+                                        @can('tags.destroy')
+                                            <td width='30px'class="px-1">
+                                                {!! Form::open(['route' => ['tags.destroy', $tag->id], 'method' => 'DELETE']) !!}
+                                                    <button class="btn btn-sm  btn-link text-decoration-none text-danger">Eliminar</button>
+                                                {!! Form::close() !!}
+                                            </td>
+                                        @endcan
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-
                         {{ $tags->links() }}
                     </div>
                 </div>

@@ -24,17 +24,23 @@
                                     <tr>
                                         <td scope="row">{{ $post->id }}</td>
                                         <td>{{ $post->name }}</td>
-                                        <td width='30px'class="px-1">
-                                            <a href="{{ route('posts.show', $post->id) }}" class="btn btn-sm btn-link text-decoration-none text-dark">Ver</a>
-                                        </td>
-                                        <td width='30px'class="px-1">
-                                            <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-link text-decoration-none text-secondary">Editar</a>
-                                        </td>
-                                        <td width='30px'class="px-1">
-                                            {!! Form::open(['route' => ['posts.destroy', $post->id], 'method' => 'DELETE']) !!}
-                                                <button class="btn btn-sm  btn-link text-decoration-none text-danger">Eliminar</button>
-                                            {!! Form::close() !!}
-                                        </td>
+                                        @can('posts.show')
+                                            <td width='30px'class="px-1">
+                                                <a href="{{ route('posts.show', $post->id) }}" class="btn btn-sm btn-link text-decoration-none text-dark">Ver</a>
+                                            </td>
+                                        @endcan
+                                        @can('posts.edit')
+                                            <td width='30px'class="px-1">
+                                                <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-link text-decoration-none text-secondary">Editar</a>
+                                            </td>
+                                        @endcan
+                                        @can('posts.destroy')
+                                            <td width='30px'class="px-1">
+                                                {!! Form::open(['route' => ['posts.destroy', $post->id], 'method' => 'DELETE']) !!}
+                                                    <button class="btn btn-sm  btn-link text-decoration-none text-danger">Eliminar</button>
+                                                {!! Form::close() !!}
+                                            </td>
+                                        @endcan
                                     </tr>
                                 @endforeach
                             </tbody>

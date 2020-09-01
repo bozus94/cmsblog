@@ -48,15 +48,31 @@
                                 </li>
                             @endif
                         @else
-                            <li class="nav-item">
-                                <a href="{{ route('tags.index') }}" class="nav-link">Etiquetas</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('posts.index') }}" class="nav-link">Entradas</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('categories.index') }}" class="nav-link">Categorias</a>
-                            </li>
+                            @can('roles.index')
+                                <li class="nav-item">
+                                    <a href="{{ route('roles.index') }}" class="nav-link">Roles</a>
+                                </li>
+                            @endcan
+                            @can('users.index')
+                                <li class="nav-item">
+                                    <a href="{{ route('users.index') }}" class="nav-link">Usuarios</a>
+                                </li>
+                            @endcan
+                            @can('posts.index')
+                                <li class="nav-item">
+                                    <a href="{{ route('posts.index') }}" class="nav-link">Entradas</a>
+                                </li>
+                            @endcan
+                            @can('tags.index')
+                                <li class="nav-item">
+                                    <a href="{{ route('tags.index') }}" class="nav-link">Etiquetas</a>
+                                </li>
+                            @endcan
+                            @can('categories.index')
+                                <li class="nav-item">
+                                    <a href="{{ route('categories.index') }}" class="nav-link">Categorias</a>
+                                </li>
+                            @endcan
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
