@@ -37,6 +37,52 @@ class PermissionSeeder extends Seeder
             ]),
         ];
 
+        $postsAdmin = [
+            Permission::create([
+                'name' => 'posts.index',
+                'description' => 'Permite listar las entradas del sistema'
+            ]),
+            Permission::create([
+                'name' => 'posts.create',
+                'description' => 'Permite crear nuevas entradas'
+            ]),
+            Permission::create([
+                'name' => 'posts.edit',
+                'description' => 'Permite editar las entradas del sistema'
+            ]),
+            Permission::create([
+                'name' => 'posts.show',
+                'description' => 'Permite visualizar en detalle las entradas del sistema'
+            ]),
+            Permission::create([
+                'name' => 'posts.destroy',
+                'description' => 'Permite eliminar las entradas del sistema'
+            ]),
+        ];
+
+        $rolesAdmin = [
+            Permission::create([
+                'name' => 'roles.index',
+                'description' => 'Permite listar los roles del sistema'
+            ]),
+            Permission::create([
+                'name' => 'roles.create',
+                'description' => 'Permite crear nuevos role'
+            ]),
+            Permission::create([
+                'name' => 'roles.edit',
+                'description' => 'Permite editar los roles del sistema'
+            ]),
+            Permission::create([
+                'name' => 'roles.show',
+                'description' => 'Permite visualizar en detalle los roles del sistema'
+            ]),
+            Permission::create([
+                'name' => 'roles.destroy',
+                'description' => 'Permite eliminar los roles del sistema'
+            ]),
+        ];
+
         $usersAdmin = [
             Permission::create([
                 'name' => 'users.index',
@@ -56,7 +102,7 @@ class PermissionSeeder extends Seeder
             ])
         ];
 
-        $categoriasAdmin = [
+        $categoriesAdmin = [
             Permission::create([
                 'name' => 'categories.index',
                 'description' => 'Permite listar las categorias del sistema'
@@ -79,34 +125,46 @@ class PermissionSeeder extends Seeder
             ]),
         ];
 
-        $role = Role::Create([
-            'name' => 'Administrador Supremo',
+        $roleAdmin = Role::Create([
+            'name' => 'Administrador',
             'description' => 'Gestiona todo el sistema '
         ]);
-        $role->givePermissionTo($categoriasAdmin);
 
-        $role = Role::Create([
+        $roleTag = Role::Create([
             'name' => 'Administrador de etiquetas',
             'description' => 'Gestiona las etiquetas del sistema'
         ]);
-        $role->givePermissionTo($tagsAdmin);
+        $roleTag->givePermissionTo($tagsAdmin);
 
-        $role = Role::Create([
+        $roleUser = Role::Create([
             'name' => 'Administrador de usuarios',
             'description' => 'Gestiona los usuarios del sistema'
         ]);
-        $role->givePermissionTo($usersAdmin);
+        $roleUser->givePermissionTo($usersAdmin);
 
-        $role = Role::Create([
+        $rolePost = Role::Create([
+            'name' => 'Administrador de posts',
+            'description' => 'Gestiona los posts del sistema'
+        ]);
+        $rolePost->givePermissionTo($postsAdmin);
+
+        $roleRole = Role::Create([
+            'name' => 'Administrador de roles',
+            'description' => 'Gestiona los roles del sistema'
+        ]);
+        $roleRole->givePermissionTo($rolesAdmin);
+
+        $roleCat = Role::Create([
             'name' => 'Administrador de categorias',
             'description' => 'Gestiona las categorias del sistema'
         ]);
+        $roleCat->givePermissionTo($categoriesAdmin);
 
         $user = User::create([
             'name' => 'Bryan Ortega',
             'email' => 'bortega@admin.com',
             'password' => bcrypt('admin12340'),
         ]);
-        $user->assignRole($role);
+        $user->assignRole($roleAdmin);
     }
 }
