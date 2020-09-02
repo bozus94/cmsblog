@@ -6,7 +6,7 @@
             <div class="col-md-8 offset-md-2">
                 <div class="card">
                     <div class="card-header">
-                        Lista de Entradas
+                        Lista de Usuarios
                     </div>
                     <div class="card-body">
                         <table class="table table-hover">
@@ -14,24 +14,24 @@
                                 <tr>
                                     <th width="20px">ID</th>
                                     <th >Nombre</th>
-                                    <th colspan="3" class="text-center">
-                                        <a href="{{ route('posts.create') }}" class="btn btn-sm btn-link text-decoration-none text-primary">Añadir+</a>
-                                    </th>
+                                    {{-- <th colspan="3" class="text-center">
+                                        <a href="{{ route('users.create') }}" class="btn btn-sm btn-link text-decoration-none text-primary">Añadir+</a>
+                                    </th> --}}
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($posts as $post)
+                                @foreach ($users as $user)
                                     <tr>
-                                        <td scope="row">{{ $post->id }}</td>
-                                        <td>{{ $post->name }}</td>
+                                        <td scope="row">{{ $user->id }}</td>
+                                        <td>{{ $user->name }}</td>
                                         <td width='30px'class="px-1">
-                                            <a href="{{ route('posts.show', $post->id) }}" class="btn btn-sm btn-link text-decoration-none text-dark">Ver</a>
+                                            <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-link text-decoration-none text-dark">Ver</a>
                                         </td>
                                         <td width='30px'class="px-1">
-                                            <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-link text-decoration-none text-secondary">Editar</a>
+                                            <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-link text-decoration-none text-secondary">Editar</a>
                                         </td>
                                         <td width='30px'class="px-1">
-                                            {!! Form::open(['route' => ['posts.destroy', $post->id], 'method' => 'DELETE']) !!}
+                                            {!! Form::open(['route' => ['users.destroy', $user->id], 'method' => 'DELETE']) !!}
                                                 <button class="btn btn-sm  btn-link text-decoration-none text-danger">Eliminar</button>
                                             {!! Form::close() !!}
                                         </td>
@@ -40,7 +40,7 @@
                             </tbody>
                         </table>
 
-                        {{ $posts->links() }}
+                        {{ $users->links() }}
                     </div>
                 </div>
             </div>

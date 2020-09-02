@@ -6,18 +6,19 @@
             <div class="col-md-8 offset-md-2">
                 <div class="card">
                     <div class="card-header">
-                         Editar Entrada
+                         Crear Role
 
                     </div>
                     <div class="card-body">
-                        {!! Form::model($post, ['route' => ['posts.update', $post->id],'method' => 'PUT']) !!}
+                        {!! Form::open(['route' => 'roles.store']) !!}
 
-                            @include('admin.posts.partials.form')
+                            @include('admin.roles.partials.form')
 
                         {!! Form::close() !!}
                     </div>
                 </div>
-            </div> 
+            </div>
         </div>
     </div>
 @endsection
+

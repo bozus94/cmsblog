@@ -29,6 +29,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('categories', 'Admin\CategoryController');
     Route::resource('tags', 'Admin\TagController');
     Route::resource('posts', 'Admin\PostController');
-    Route::resource('users', 'Admin\UserController')->except('create', 'update');
+    Route::resource('users', 'Admin\UserController')->except('create', 'store');
+    Route::put('users/{user}/newPassword', 'Admin\UserController@updatePassword')->name('users.newPassword');
     Route::resource('roles', 'Admin\RoleController');
 });

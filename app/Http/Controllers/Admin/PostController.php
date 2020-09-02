@@ -5,14 +5,22 @@ namespace App\Http\Controllers\admin;
 use App\Tag;
 use App\Post;
 use App\Category;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\http\Requests\PostStoreRequest;
+use App\Http\Requests\PostStoreRequest;
 use Illuminate\Support\Facades\Storage;
-use App\http\Requests\PostUpdateRequest;
+use App\Http\Requests\PostUpdateRequest;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:posts.index')->only('index');
+        $this->middleware('permission:posts.show')->only('show');
+        $this->middleware('permission:posts.create')->only(['create', 'store']);
+        $this->middleware('permission:posts.edit')->only(['edit', 'update']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -20,8 +28,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::orderBy('id', 'DESC')->where('user_id', Auth::user()->id)
-                                            ->paginate();
+        $posts = Post::where('user_id', '===', Auth::user()->id)->oderBy('id', 'DESC')->paginate(8);
 
         return view('admin.posts.index', compact('posts'));
     }
@@ -33,23 +40,22 @@ class PostController extends Controller
      */
     public function create()
     {
-        $tags = Tag::orderBy('name', 'ASC')->get();
-        $categories = Category::orderBy('name', 'ASC')->pluck('name', 'id');
-        
-        return view('admin.posts.create', compact(['categories', 'tags']));
+        $categories = Category::orderBy('id', 'DESC')->pluck('name', 'id');
+        $tags = Tag::orderBy('id', 'DESC')->get();
 
+        return view('admin.posts.create', compact(['tags', 'categories']));  
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\PostStoreRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(PostStoreRequest $request)
     {
-        $post = Post::create($request->all());
-
+        $post = Post::create($request->validated());
+        
        if($request->file('file')){
   
             $path = Storage::disk('images_posts')->put('', $request->file('file'));
@@ -58,23 +64,21 @@ class PostController extends Controller
                 $image_path = asset('images/posts/' . $path);
                 $post->fill(['file' => $path, 'ff_path' => $image_path])->save();   
             }         
-        }   
-
+        }  
         $post->tags()->attach($request->input('tags'));
 
         return redirect()->route('posts.edit', $post->id)
-                        ->with('info', 'La entrada se ha creado correctamente');
+                         ->with('info', 'la Entrada se creo correctamente');
     }
 
-        /**
+    /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Post $post
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Post $post)
     {
-        $post = Post::find($id);
         $this->authorize('pass', $post);
 
         return view('admin.posts.show', compact('post'));
@@ -83,35 +87,32 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Post $post
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-
-        $post = Post::find($id);
         $this->authorize('pass', $post);
-        
-        $tags = Tag::orderBy('name', 'ASC')->get();
+
         $categories = Category::orderBy('name', 'ASC')->pluck('name', 'id');
-        return view('admin.posts.edit', compact(['post', 'tags', 'categories']));
-    }
+        $tags = Tag::orderBy('name', 'ASC')->get();
+        return view('admin.posts.edit', compact(['post', 'tags', 'categories']));  
+    } 
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Http\Requests\CategoryUpdateRequest  $request
+     * @param  \App\Post $post
      * @return \Illuminate\Http\Response
      */
-    public function update(PostUpdateRequest $request, $id)
-    {
-        $post = Post::find($id);
+    public function update(PostUpdateRequest $request, Post $post)
+    {   
         $this->authorize('pass', $post);
 
         $image_old = $post->file ? $post->file : null;
 
-        $post->fill($request->all())->save();
+        $post->fill($request->validated())->save();
 
         if($request->file('file')){
 
@@ -130,18 +131,17 @@ class PostController extends Controller
         $post->tags()->sync($request->input('tags'));
 
         return redirect()->route('posts.edit', $post->id)
-                        ->with('info', 'La entrada se actualizo correctamente');
+                         ->with('info', 'la Entrada se modifico correctamente');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Post $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        $post = Post::find($id);
         $this->authorize('pass', $post);
 
         if($post->file){
@@ -150,6 +150,7 @@ class PostController extends Controller
         $post->delete();
 
         return redirect()->route('posts.index')
-                        ->with('info', 'la Entrada se elimino correctamente');
+                         ->with('info', 'la Entrada se elimino correctamente');
+
     }
 }

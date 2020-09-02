@@ -10,6 +10,14 @@ use App\Http\Requests\CategoryUpdateRequest;
 
 class CategoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:categories.index')->only('index');
+        $this->middleware('permission:categories.show')->only('show');
+        $this->middleware('permission:categories.create')->only(['create', 'store']);
+        $this->middleware('permission:categories.edit')->only(['edit', 'update']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -35,12 +43,12 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\CategoryStoreRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(CategoryStoreRequest $request)
     {
-        $category = Category::create($request->all());
+        $category = Category::create($request->validated());
 
         return redirect()->route('categories.edit', $category->id)
                          ->with('info', 'la categoria se creo correctamente');
@@ -49,40 +57,35 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Category $category
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Category $category)
     {
-        $category = Category::find($id);
-
         return view('admin.categories.show', compact('category'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Category $category
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Category $category)
     {
-        $category = Category::find($id);
-
         return view('admin.categories.edit', compact('category'));  
     } 
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Http\Requests\CategoryUpdateRequest  $request
+     * @param  \App\Category $category
      * @return \Illuminate\Http\Response
      */
-    public function update(CategoryStoreRequest $request, $id)
+    public function update(CategoryUpdateRequest $request, Category $category)
     {
-        $category = Category::find($id);
-        $category->fill($request->all())->save();
+        $category->fill($request->validated())->save();
 
         return redirect()->route('categories.edit', $category->id)
                          ->with('info', 'la categoria se modifico correctamente');
@@ -91,12 +94,12 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Category $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        $category = Category::find($id)->delete();
+        $category->delete();
 
         return redirect()->route('categories.index')
                          ->with('info', 'la categoria se elimino correctamente');

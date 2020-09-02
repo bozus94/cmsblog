@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Http\Controllers\Controller;
 use App\Tag;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Http\Requests\TagStoreRequest;
 use App\Http\Requests\TagUpdateRequest;
-use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
     public function __construct()
-    {   
-        $this->middleware('auth');
+    {
+        $this->middleware('permission:tags.index')->only('index');
+        $this->middleware('permission:tags.show')->only('show');
+        $this->middleware('permission:tags.create')->only(['create', 'store']);
+        $this->middleware('permission:tags.edit')->only(['edit', 'update']);
     }
 
     /**
@@ -22,9 +25,9 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::orderBy('id', 'DESC')->paginate();
+        $tags = Tag::orderBy('id', 'DESC')->paginate(8);
 
-       return view('admin.tags.index', compact('tags'));
+        return view('admin.tags.index', compact('tags'));
     }
 
     /**
@@ -40,67 +43,66 @@ class TagController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\TagStoreRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(TagStoreRequest $request)
     {
-        $tag = Tag::create($request->all());  
+        $tag = Tag::create($request->validated());
 
         return redirect()->route('tags.edit', $tag->id)
-        ->with('info', 'Etiqueta creada exitosamente');
+                         ->with('info', 'la etiqueta se creo correctamente');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Tag $tag
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Tag $tag)
     {
-        $tag = Tag::find($id);
-
         return view('admin.tags.show', compact('tag'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Tag $tag
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Tag $tag)
     {
-         $tag = Tag::find($id);
-         
-         return view('admin.tags.edit', compact('tag'));
-    }
+        return view('admin.tags.edit', compact('tag'));  
+    } 
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Http\Requests\TagUpdateRequest  $request
+     * @param  \App\Tag $tag
      * @return \Illuminate\Http\Response
      */
-    public function update(TagUpdateRequest $request, $id)
+    public function update(TagUpdateRequest $request, Tag $tag)
     {
-        $tag = Tag::find($id);
-        $tag->fill($request->all())->save();
-        return redirect()->route('tags.edit', $tag->id)->with('info', 'Etiqueta actualizada exitosamente');
+        $tag->fill($request->validated())->save();
+
+        return redirect()->route('tags.edit', $tag->id)
+                         ->with('info', 'la etiqueta se modifico correctamente');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Tag $tag
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Tag $tag)
     {
-        $tag = Tag::find($id)->delete();  
+        $tag->delete();
 
-        return back()->with('info', 'Etiqueta eliminada exitosamente');    
+        return redirect()->route('tags.index')
+                         ->with('info', 'la etiqueta se elimino correctamente');
+
     }
 }
